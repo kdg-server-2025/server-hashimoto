@@ -1,0 +1,45 @@
+version: '3'
+
+services:
+  db:
+    platform: linux/x86_64
+    image: mysql:5.7
+    volumes:
+      - db_data:/var/lib/mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: schoolWordpress
+      MYSQL_DATABASE: wordpress_db
+      MYSQL_USER: admin
+      MYSQL_PASSWORD: ppasword
+
+  wordpress:
+    depends_on:
+      - db
+    image: wordpress:latest
+    volumes:
+      - wordpress_data:/var/www/html
+    ports:
+      - "8000:80"
+    restart: always
+    environment:
+      WORDPRESS_DB_HOST: db:3306
+      WORDPRESS_DB_USER: admin
+      WORDPRESS_DB_PASSWORD: ppasword
+
+mariadb:
+    image: mariadb:latest
+    volumes:
+      - mariadb_data:/var/lib/mysql # MariaDB のデータ
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: root # root ユーザーのパスワード
+      MYSQL_PASSWORD: password # wordpress ユーザーのパスワード
+      MYSQL_USER: wordpress
+      MYSQL_DATABASE: wordpress
+
+volumes:
+  wordpress_data:
+  mariadb_data:
+  db_data:
